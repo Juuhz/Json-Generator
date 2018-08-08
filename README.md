@@ -8,7 +8,7 @@ Essas instruções farão com que você tenha uma cópia do projeto em execuçã
 
 ## Pré-requisitos
 
-Antes de mais nada, verifique se você possui os requisitos para rodar o GitChart.
+Antes de mais nada, verifique se você possui os requisitos para rodar o projeto.
 
 ```
 
