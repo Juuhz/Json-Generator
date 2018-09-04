@@ -29,7 +29,8 @@ class App extends Component {
 			generateds: 1,
 			percent: 	'0',
 			num_init: 	2,
-			num_end: 	200,
+			num_end: 	5566,
+			steps: 		2,
 			secondsElapsed: 0,
 			response: 	[],
 			disableBtn: false
@@ -105,7 +106,7 @@ class App extends Component {
 					this._addRowLog({
 						text: 'Pasta criada com sucesso!',
 						color: 'green'
-					});	
+					});
 
 					// Chama evento para iniciar a geração dos Jsons
 					this._initGeneratorJson();
@@ -128,7 +129,7 @@ class App extends Component {
 	}
 
 	// Evento para iniciciar a geração dos jsons
-	_initGeneratorJson( dir_temp ){
+	async _initGeneratorJson(){
 
 		// Adiciona Ação do Download no LOG
 		this._addRowLog({
@@ -147,13 +148,14 @@ class App extends Component {
 					if( result.response ){
 
 						// Adiciona Ação do Download no LOG
-						this._addRowLog({
+						/*this._addRowLog({
 							text: `Download concluído do Json: ${i}`
-						});
+						});*/
 
 						// Atualiza os estados novos
 						let generateds 	= this.state.generateds + 1,
-							percent 	= ( generateds * 100 ) / this.state.num_end;
+							percent 	= ( generateds * 100 ) / this.state.num_end,
+							steps 		= this.state.steps;
 						
 						this.setState({
 							generateds: generateds,
