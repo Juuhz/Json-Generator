@@ -5,7 +5,6 @@
 */
 
 import React, { Component } from 'react';
-import styled               from "styled-components";
 import { 
   Wrapper,
   Panel,
@@ -14,8 +13,7 @@ import {
   Clock,
   Button,
   Log,
-  BoxRows,
-  Row
+  BoxRows
 }                           from './App/styled.jsx';
 
 class App extends Component {
