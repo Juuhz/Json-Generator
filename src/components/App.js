@@ -24,16 +24,18 @@ class App extends Component {
 		super(props);
 
 		this.state = {
-			endpoint: 	'http://54.207.26.175',
-			dir_temp: 	new Date().getTime(),
-			generateds: 1,
-			percent: 	'0',
-			num_init: 	2,
-			num_end: 	5566,
-			steps: 		2,
+			endpoint: 		'http://54.207.26.175',
+			dir_temp: 		new Date().getTime(),
+			generateds: 	1,
+			percent: 		'0',
+			num_init: 		2,
+			num_end: 		5566,
 			secondsElapsed: 0,
-			response: 	[],
-			disableBtn: false
+			response: 		[],
+			disableBtn: 	false,
+			btnText: 		'Iniciar',
+			errosDown: 		[],
+			refactor: 		false
 		}
 
 		this.incrementer = null;
@@ -47,16 +49,21 @@ class App extends Component {
 			disableBtn: true
 		});
 
-		// Adiciona processo no LOG
-		this._addRowLog({
-			text: 'Iniciando processo de regionalização...'
-		});
-
-		// Cria evento para criar a pasta e começar a gerar os jsons
-		this._createFolder();
-
 		// Inicia o cronômetro
 		this._startClock();
+
+		// Caso não seja refatoramento
+		if( !this.state.refactor ){
+
+			// Cria evento para criar a pasta e começar a gerar os jsons
+			this._createFolder();
+
+		}else{ // Caso seja
+
+			// Inicia processo de refatoramento
+			this._initRefactor();
+
+		}
 
 	}
 
@@ -129,7 +136,12 @@ class App extends Component {
 	}
 
 	// Evento para iniciciar a geração dos jsons
-	async _initGeneratorJson(){
+	_initGeneratorJson(){
+
+		// Adiciona processo no LOG
+		this._addRowLog({
+			text: 'Iniciando processo de regionalização...'
+		});
 
 		// Adiciona Ação do Download no LOG
 		this._addRowLog({
@@ -138,59 +150,143 @@ class App extends Component {
 		});
 
 		for ( let i = this.state.num_init; i <= this.state.num_end; i++) {
-				
-			fetch( `${this.state.endpoint}/generator.php?json=${i}&dir_temp=${this.state.dir_temp}`, {
-				mode: 'cors',
-			})
-			.then(res => res.json())
-			.then(
-				(result) => {
-					if( result.response ){
-
-						// Adiciona Ação do Download no LOG
-						/*this._addRowLog({
-							text: `Download concluído do Json: ${i}`
-						});*/
-
-						// Atualiza os estados novos
-						let generateds 	= this.state.generateds + 1,
-							percent 	= ( generateds * 100 ) / this.state.num_end,
-							steps 		= this.state.steps;
-						
-						this.setState({
-							generateds: generateds,
-							percent: parseFloat( percent ).toFixed(2)
-						});
-
-						// Caso tenha feito todos os jsons, chama evento para zipa-los.
-						if( generateds === this.state.num_end ){
-
-							// Adiciona Ação do Download no LOG
-							this._addRowLog({
-								text: 'Downloads concluído!',
-								color: 'green'
-							});
-
-							// Zip os jsons baixados.
-							this._zipFolder();
-						}
-
-					}else{
-
-						// Adiciona erro no LOG
-						this._addErrorLog( result.msg );
-
-					}
-				},
-				(error) => {
-
-					// Adiciona erro no LOG
-					this._addErrorLog( 'Erro ao criar pasta no servidor.' );
-
-				}
-			);
+			
+			// Execulta o fetch para consumir o webservice
+			this._fetch( i, false, i, this.state.num_end );
 
 		}
+
+	}
+
+	// Evento para iniciar a refatoração dos jsons que deram erros
+	_initRefactor(){
+
+		// Adiciona processo no LOG
+		this._addRowLog({
+			text: 'Iniciando processo de refatoramento...'
+		});
+
+		// Adiciona Ação do Download no LOG
+		this._addRowLog({
+			text: 'Iniciando Downloads dos Jsons que apresentaram IDs duplicados...',
+		});
+
+		// Atualiza estado
+		this.setState({
+			refactor: false
+		});
+
+		let lastItem 	= this.state.errosDown.length,
+			i 			= 1;
+
+		this.state.errosDown.forEach( function( json, key ){
+			
+			// Execulta o fetch para consumir o webservice
+			this._fetch( json, key, i, lastItem );
+			i++;
+
+		}.bind(this));
+
+	}
+
+	// Evento para realizar a lógica e consumir o webservice ( API )
+	async _fetch( json, key, i, lastItem ){
+
+		fetch( `${this.state.endpoint}/generator.php?json=${json}&dir_temp=${this.state.dir_temp}`, {
+			mode: 'cors',
+		})
+		.then(res => res.json())
+		.then(
+			(result) => {
+
+				if( result.response ){
+
+					// Adiciona Ação do Download no LOG
+					/*this._addRowLog({
+						text: `Download concluído do Json: ${json}`
+					});*/
+
+					// Atualiza os estados novos
+					let generateds 	= this.state.generateds + 1,
+						percent 	= ( generateds * 100 ) / this.state.num_end;
+					
+					this.setState({
+						generateds: generateds,
+						percent: parseFloat( percent ).toFixed(2)
+					});
+
+				}else{
+
+					// Caso a Key não exista, ele não está fazendo refatoramento
+					if( key === false ){
+
+						// Adiciona no array a nova linha
+						let errosDown = this.state.errosDown.concat( json );
+
+						// Atualiza estado com o novo array de erros ( jsons )
+						this.setState({
+							errosDown: errosDown
+						});
+
+					}
+
+					// Adiciona erro no LOG
+					this._addErrorLog( result.msg );
+
+				}
+
+				//Caso seja a última requisição
+				if( i === lastItem ){
+
+					// Caso tenha feito todos os jsons, chama evento para zipa-los.
+					if( this.state.generateds === this.state.num_end ){
+
+						// Adiciona Ação do Download no LOG
+						this._addRowLog({
+							text: 'Downloads concluído!',
+							color: 'green'
+						});
+
+						// Zip os jsons baixados.
+						this._zipFolder();
+
+					}else{ // Caso tenha completado, mas não baixou todos, houve erro
+
+						let erroMsg = "Os seguintes jsons apresentaram IDs duplicados: <br><br>";
+
+						this.state.errosDown.forEach( function( json ){
+							erroMsg += `- ${json}.json <br>`;
+						});
+
+						erroMsg += "<br>";
+
+						// Adiciona jsons com erro no LOG
+						this._addErrorLog( erroMsg );
+
+						// Informa como ajustar o erro e oque o usuário tem que fazer
+						this._addRowLog({
+							text: 'Ajuste estes erros no CMS e clique em "Refatorar" para baixar apenas estes jsons e gerar o zip para download com toda a regionalização.',
+							color: 'yellow'
+						});	
+
+						// Muda texto do botão
+						this.setState({
+							btnText: 'Refatorar',
+							refactor: true
+						});
+
+					}
+
+				}
+
+			},
+			(error) => {
+
+				// Adiciona erro no LOG
+				this._addErrorLog( `Falha ao baixar o json: ${json}.json | Servidor retornou erro 500.` );
+
+			}
+		);
 
 	}
 
@@ -308,7 +404,7 @@ class App extends Component {
 		  		<Separador/>
 		  		<Clock>{this._formattedSeconds(this.state.secondsElapsed)}</Clock>
 
-		  		<Button onClick={this._initRegionalizacao.bind(this)} disabled={disableBtn}>Iniciar</Button>
+		  		<Button onClick={this._initRegionalizacao.bind(this)} disabled={disableBtn}>{this.state.btnText}</Button>
 		  	</Panel>
 
 		  	<Log>
