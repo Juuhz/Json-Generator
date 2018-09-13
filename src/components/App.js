@@ -31,7 +31,6 @@ class App extends Component {
 			num_init: 		2,
 			num_end: 		5566,
 			secondsElapsed: 0,
-			response: 		[],
 			disableBtn: 	false,
 			btnText: 		'Iniciar',
 			errosDown: 		[],
@@ -202,9 +201,9 @@ class App extends Component {
 				if( result.response ){
 
 					// Adiciona Ação do Download no LOG
-					/*this._addRowLog({
+					this._addRowLog({
 						text: `Download concluído do Json: ${json}`
-					});*/
+					});
 
 					// Atualiza os estados novos
 					let generateds 	= this.state.generateds + 1,
@@ -315,7 +314,7 @@ class App extends Component {
 
 					// Adiciona download do ZIP lo LOG
 					this._addRowLog({
-						text: 'Faça o download: <a href="'+ result.urlZip +'">regionalização.zip</a>',
+						text: 'Faça o download: <a href="'+ result.urlZip +'" style="color: DodgerBlue">regionalização.zip</a>',
 						color: 'DodgerBlue'
 					});
 
@@ -349,20 +348,15 @@ class App extends Component {
 
 		// Adiciona horário no LOG
 		let now 	= new Date(),
-			nowLog 	= `[${this._addZero( now.getHours() )}:${this._addZero( now.getMinutes() )}:${this._addZero( now.getSeconds() )}]: `;
+			rowTxt 	= `[${this._addZero( now.getHours() )}:${this._addZero( now.getMinutes() )}:${this._addZero( now.getSeconds() )}]: ${row.text}`;
 
-		row.text = nowLog + row.text;
+		// Adiciona na lista do LOG
+		let newRow 	= 	document.createElement("li");
 
-		// Caso não tenha a key 'color', adiciona uma default
-		row.color = row.color ? row.color : 'white';
-
-		// Adiciona no array a nova linha
-		let newStateLog = this.state.response.concat( row );
-
-		// Atualiza o estado para exibir na tela
-		this.setState({
-			response: newStateLog
-		});
+		newRow.innerHTML 	= rowTxt;
+		newRow.style.color 	= row.color ? row.color : 'white';
+	    
+	    document.getElementById( "BoxRows" ).appendChild( newRow ); 
 
 		// Deixa o scroll sempre no botttom para pegar os novos elementos sempre
 		let objDiv = document.getElementById("BoxRows");
@@ -408,15 +402,7 @@ class App extends Component {
 		  	</Panel>
 
 		  	<Log>
-		  		<BoxRows id="BoxRows">
-		  			{
-		  				this.state.response.map( function( row, index ){
-		  					return(
-		  						<Row key={index} color={row.color} dangerouslySetInnerHTML={{__html: row.text}}></Row>
-		  					);
-		  				})
-		  			}
-		  		</BoxRows>
+		  		<BoxRows id="BoxRows" />
 		  	</Log>
 		  </Wrapper>
 		);

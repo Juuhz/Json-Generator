@@ -87,15 +87,8 @@ export const BoxRows = styled.ul`
 	
 	&::-webkit-scrollbar-thumb
 		background: #333
-`;
 
-export const Row = styled.li`
-	margin-bottom: 7px;
-	color: ${props => props.color}
-	font-weight: ${props => props.color != 'white' ? '600' : '400'};
-	text-decoration: ${props => props.color != 'white' ? 'underline' : 'initial'};
-
-	a{
-		color: ${props => props.color};
-	}
+    li{
+        margin-bottom: 7px;
+    }
 `;
