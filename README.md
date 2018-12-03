@@ -54,10 +54,6 @@ npm start
 
 OBS: ao rodar o **npm start**, será aberta automaticamente uma página no seu navegador, apontando para **http://localhost:3000**, caso isso não aconteça, basta acessar a url manualmente.
 
-## Recomendação
-
-Recomendo rodar este projeto com o navegador Safari, porquê ele tem um buffer maior e aceita mais requisições assíncronas, oque deixa o processo mais rápido e impede travamento do navegador.
-
 ## Autor
 
 **Reinaldo Amorim** - [http://reinaldoamorim.com.br](http://reinaldoamorim.com.br)
