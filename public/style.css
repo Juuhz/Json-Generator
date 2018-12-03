@@ -1,1 +1,1 @@
-*{box-sizing: border-box;border: none;padding: 0;margin: 0;}body{overflow: hidden;background: #00b9f1;color:#FFF;font-family: 'Roboto', sans-serif;}
+*{box-sizing: border-box;border: none;padding: 0;margin: 0;}body{ overflow: hidden; color: #FFF; font-family: 'Roboto', sans-serif; background: #00b9f1 url(bg.jpg) no-repeat top center; background-size: cover; height: 100vh;}

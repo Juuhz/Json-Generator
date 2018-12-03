@@ -2,19 +2,33 @@
 	@ Criado por: Reinaldo Amorim
 	@ http://reinaldoamorim.com.br
 	@ 08/08/2018
+	
+	------------------------------
+
+	@ Versão atual: 1.0.1
+	@ Homologada: 03/12/2018
 */
 
 import React, { Component } from 'react';
 import { 
-  Wrapper,
-  Panel,
-  Percent,
-  Separador,
-  Clock,
-  Button,
-  Log,
-  BoxRows
-}                           from './App/styled.jsx';
+	// Container
+  		Wrapper,
+
+  	// Painel
+		Panel,
+		Percent,
+		Separador,
+		Clock,
+		Button,
+
+	// Log
+		Log,
+		BoxRows,
+
+  	// Footer
+  		Logo,
+  		Version,
+}                           from './styled.js';
 
 class App extends Component {
 
@@ -32,7 +46,8 @@ class App extends Component {
 			disableBtn: 	false,
 			btnText: 		'Iniciar',
 			errosDown: 		[],
-			refactor: 		false
+			refactor: 		false,
+			version: 		'1.0.1',
 		}
 
 		this.incrementer = null;
@@ -108,7 +123,7 @@ class App extends Component {
 
 					// Adiciona Ação da criação da pasta no LOG
 					this._addRowLog({
-						text: 'Pasta criada com sucesso!',
+						text: `Pasta criada com sucesso! ID: ${this.state.dir_temp}`,
 						color: 'green'
 					});
 
@@ -149,7 +164,7 @@ class App extends Component {
 		for ( let i = this.state.num_init; i <= this.state.num_end; i++) {
 			
 			// Execulta o fetch para consumir o webservice
-			this._fetch( i, false, i, this.state.num_end );
+			this._fetch( i, false, this.state.num_end );
 
 		}
 
@@ -166,6 +181,7 @@ class App extends Component {
 		// Adiciona Ação do Download no LOG
 		this._addRowLog({
 			text: 'Iniciando Downloads dos Jsons que apresentaram IDs duplicados...',
+			color: 'yellow'
 		});
 
 		// Atualiza estado
@@ -173,23 +189,21 @@ class App extends Component {
 			refactor: false
 		});
 
-		let lastItem 	= this.state.errosDown.length,
-			i 			= 1;
+		let lastItem 	= this.state.errosDown.length;
 
 		this.state.errosDown.forEach( function( json, key ){
 			
 			// Execulta o fetch para consumir o webservice
-			this._fetch( json, key, i, lastItem );
-			i++;
+			this._fetch( json, key, lastItem );
 
 		}.bind(this));
 
 	}
 
 	// Evento para realizar a lógica e consumir o webservice ( API )
-	async _fetch( json, key, i, lastItem ){
+	async _fetch( json, key, lastItem ){
 
-		fetch( `${this.state.endpoint}/generator.php?json=${json}&dir_temp=${this.state.dir_temp}`, {
+		fetch( `${this.state.endpoint}/generator.php?json=${json}&dir_temp=${this.state.dir_temp}&last_json=${lastItem}`, {
 			mode: 'cors',
 		})
 		.then(res => res.json())
@@ -233,7 +247,7 @@ class App extends Component {
 				}
 
 				//Caso seja a última requisição
-				if( i === lastItem ){
+				if( result.isLastJson ){
 
 					// Caso tenha feito todos os jsons, chama evento para zipa-los.
 					if( this.state.generateds === this.state.num_end ){
@@ -398,10 +412,11 @@ class App extends Component {
 
 		  		<Button onClick={this._initRegionalizacao.bind(this)} disabled={disableBtn}>{this.state.btnText}</Button>
 		  	</Panel>
-
 		  	<Log>
 		  		<BoxRows id="BoxRows" />
 		  	</Log>
+		  	<Logo><img src="./logo.svg" /></Logo>
+		  	<Version title="Homologada: 03/12/2018 | Consulte o arquivo Changelog.">v{this.state.version}</Version>
 		  </Wrapper>
 		);
 	}
