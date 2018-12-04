@@ -5,8 +5,8 @@
 	
 	------------------------------
 
-	@ Versão atual: 1.0.1
-	@ Homologada: 03/12/2018
+	@ Versão atual: 1.0.2
+	@ Homologada: 04/12/2018
 */
 
 import React, { Component } from 'react';
@@ -29,6 +29,11 @@ import {
   		Logo,
   		Version,
 }                           from './styled.js';
+import {
+	addZero,
+	formattedSeconds,
+	getVersion 
+}							from '../../utils/index.js'
 
 class App extends Component {
 
@@ -41,13 +46,13 @@ class App extends Component {
 			generateds: 	1,
 			percent: 		'0',
 			num_init: 		2,
-			num_end: 		5566,
+			num_end: 		22,
 			secondsElapsed: 0,
 			disableBtn: 	false,
 			btnText: 		'Iniciar',
 			errosDown: 		[],
 			refactor: 		false,
-			version: 		'1.0.1',
+			version: 		getVersion(),
 		}
 
 		this.incrementer = null;
@@ -97,11 +102,6 @@ class App extends Component {
 			lastClearedIncrementer: this.incrementer
 		});
 
-	}
-
-	// Formata o tempo do cronômetro
-	_formattedSeconds( sec ){
-		return Math.floor( sec / 60 ) + ':' + ( '0' + sec % 60 ).slice( -2 );
 	}
 
 	// Evento para criar a pasta temporária para salvar os jsons gerados
@@ -360,7 +360,7 @@ class App extends Component {
 
 		// Adiciona horário no LOG
 		let now 	= new Date(),
-			rowTxt 	= `[${this._addZero( now.getHours() )}:${this._addZero( now.getMinutes() )}:${this._addZero( now.getSeconds() )}]: ${row.text}`;
+			rowTxt 	= `[${addZero( now.getHours() )}:${addZero( now.getMinutes() )}:${addZero( now.getSeconds() )}]: ${row.text}`;
 
 		// Adiciona na lista do LOG
 		let newRow 	= 	document.createElement("li");
@@ -394,11 +394,6 @@ class App extends Component {
 
 	}
 
-	// Formata data
-	_addZero( time ){
-		return time < 10 ? '0' + time : time;
-	}
-
 	render(){
 
 		let disableBtn = this.state.disableBtn ? 'disabled' : '';
@@ -408,14 +403,14 @@ class App extends Component {
 		  	<Panel>
 		  		<Percent>{this.state.percent}%</Percent>
 		  		<Separador/>
-		  		<Clock>{this._formattedSeconds(this.state.secondsElapsed)}</Clock>
+		  		<Clock>{formattedSeconds(this.state.secondsElapsed)}</Clock>
 
 		  		<Button onClick={this._initRegionalizacao.bind(this)} disabled={disableBtn}>{this.state.btnText}</Button>
 		  	</Panel>
 		  	<Log>
 		  		<BoxRows id="BoxRows" />
 		  	</Log>
-		  	<Logo><img src="./logo.svg" /></Logo>
+		  	<Logo><img src="./logo.svg" alt="Logo Json Generator" title="Json Generator | Apoio para regionalização VML" /></Logo>
 		  	<Version title="Homologada: 03/12/2018 | Consulte o arquivo Changelog.">v{this.state.version}</Version>
 		  </Wrapper>
 		);
