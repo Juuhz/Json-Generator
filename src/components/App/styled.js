@@ -8,6 +8,57 @@ import styled from 'styled-components';
         margin: 60px auto;
     `;
 
+// Loading
+    export const Loading = styled.section`
+        display: block;
+        width: auto;
+        height: 64px;
+        margin: 0 auto;
+        text-align: center;
+        padding-top: 80px;
+        font-size: 30px;
+
+        &:after{
+            content: " ";
+            display: block;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            border-color: #fff transparent #fff transparent;
+            -webkit-animation: lds-dual-ring 1.2s linear infinite;
+            animation: lds-dual-ring 1.2s linear infinite;
+            left: 45%;
+            position: absolute;
+            top: 0px;
+        }
+
+        @keyframes lds-dual-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    `;
+
+// Alert
+    export const AlertUpdate = styled.div`
+        text-align: center;
+        background: #000;
+        padding: 20px;
+        font-size: 15px;
+
+        strong{
+            color: red;
+        }
+
+        i{
+            color: Yellow;
+        }
+    `;
+
 // Painel
     export const Panel = styled.div`
     	position: relative;

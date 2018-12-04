@@ -1,3 +1,3 @@
-export {addZero} 			from './addZero'
-export {formattedSeconds} 	from './formattedSeconds'
-export {getVersion} 		from './versioning'
+export {addZero} 					from './addZero'
+export {formattedSeconds} 			from './formattedSeconds'
+export {getVersion, verifyVersion} 	from './versioning'

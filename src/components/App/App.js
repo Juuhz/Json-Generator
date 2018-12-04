@@ -14,6 +14,12 @@ import {
 	// Container
   		Wrapper,
 
+  	// Loading
+  		Loading,
+
+  	// Alert
+		AlertUpdate,
+
   	// Painel
 		Panel,
 		Percent,
@@ -32,7 +38,8 @@ import {
 import {
 	addZero,
 	formattedSeconds,
-	getVersion 
+	getVersion,
+	verifyVersion,
 }							from '../../utils/index.js'
 
 class App extends Component {
@@ -46,13 +53,15 @@ class App extends Component {
 			generateds: 	1,
 			percent: 		'0',
 			num_init: 		2,
-			num_end: 		22,
+			num_end: 		5566,
 			secondsElapsed: 0,
 			disableBtn: 	false,
 			btnText: 		'Iniciar',
 			errosDown: 		[],
 			refactor: 		false,
 			version: 		getVersion(),
+			hasUpdate: 		false,
+			preVerify: 		true,
 		}
 
 		this.incrementer = null;
@@ -394,26 +403,91 @@ class App extends Component {
 
 	}
 
+	// Renderiza aplicação
+	_renderApp(){
+
+		if( this.state.preVerify ){ // Loading enquanto verifica se há atualização
+
+			return(
+				<Wrapper id="MainWrapper">
+					<Loading>Carregando... Aguarde.</Loading>
+				</Wrapper>
+			)
+
+		}else if( !this.state.preVerify && this.state.hasUpdate ){ // Caso tenha
+
+			return(
+
+				<Wrapper id="MainWrapper">
+					<AlertUpdate>
+						<strong>Atenção:</strong> Há atualizações pendentes. Dê um <i>PULL</i> no projeto para puxar as atualizações. Após o <i>PULL</i>, rode o projeto novamente com o <i>NPM START</i>.
+						<br />
+						<br />
+						OBS: Caso o projeto apresente erros ao iniciar, rode o comando: <i>NPM INSTALL</i>.
+					</AlertUpdate>
+				</Wrapper>
+
+			)
+
+		}else{ // Caso o projeto esteja 100% atualizado.
+
+			let disableBtn = this.state.disableBtn ? 'disabled' : '';
+
+			return(
+
+				<Wrapper id="MainWrapper">
+					<Panel>
+						<Percent>{this.state.percent}%</Percent>
+						<Separador/>
+						<Clock>{formattedSeconds(this.state.secondsElapsed)}</Clock>
+
+						<Button onClick={this._initRegionalizacao.bind(this)} disabled={disableBtn}>{this.state.btnText}</Button>
+					</Panel>
+					<Log>
+						<BoxRows id="BoxRows" />
+					</Log>
+					<Logo><img src="./logo.svg" alt="Logo Json Generator" title="Json Generator | Apoio para regionalização VML" /></Logo>
+					<Version title="Consulte o arquivo Changelog.">v{this.state.version}</Version>
+				</Wrapper>
+
+			)
+
+		}
+
+	}
+
+	// Evento que é execultado no fim do componente
+	componentDidMount(){
+
+		// Verifica se há uma versão nova do projeto
+		verifyVersion().then( (result) => {
+
+			const curVersion = atob(result.content).split( '=' )[1].trim();
+
+			if( curVersion !== getVersion() ){
+
+				// Atualiza novo estado
+				this.setState({
+					hasUpdate: true,
+					preVerify: false
+				});
+
+			}else{
+
+				// Atualiza novo estado
+				this.setState({
+					preVerify: false
+				});
+
+			}
+
+		});
+
+	}
+
+	// Renderiza componente
 	render(){
-
-		let disableBtn = this.state.disableBtn ? 'disabled' : '';
-
-		return(
-		  <Wrapper id="MainWrapper">
-		  	<Panel>
-		  		<Percent>{this.state.percent}%</Percent>
-		  		<Separador/>
-		  		<Clock>{formattedSeconds(this.state.secondsElapsed)}</Clock>
-
-		  		<Button onClick={this._initRegionalizacao.bind(this)} disabled={disableBtn}>{this.state.btnText}</Button>
-		  	</Panel>
-		  	<Log>
-		  		<BoxRows id="BoxRows" />
-		  	</Log>
-		  	<Logo><img src="./logo.svg" alt="Logo Json Generator" title="Json Generator | Apoio para regionalização VML" /></Logo>
-		  	<Version title="Homologada: 03/12/2018 | Consulte o arquivo Changelog.">v{this.state.version}</Version>
-		  </Wrapper>
-		);
+		return( this._renderApp() );
 	}
 }
 
