@@ -32,3 +32,10 @@ Todas as mudanças notáveis ​​neste projeto serão documentadas neste arqui
 
 ### Removido
 - Alertas no consoler.
+
+## [1.0.3] - 17/01/2019
+### Adicionado
+- Adicionado box flutuante do autor.
+
+### Alterado
+- Versão no .env atualizada.

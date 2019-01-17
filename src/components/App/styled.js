@@ -162,3 +162,27 @@ import styled from 'styled-components';
         float: right;
         margin-top: 20px;
     `;
+
+    export const Copy = styled.div`
+        background: rgba(255, 255, 255, 0.5);
+        color: #222;
+        position: absolute;
+        padding: 10px 15px;
+        border-radius: 4px 4px 0px 0px;
+        bottom: 0px;
+        left: 50%;
+        font-size: 10px;
+        transform: translateX( -50% );
+        -webkit-transform: translateX( -50% );
+        -moz-transform: translateX( -50% );
+        -o-transform: translateX( -50% );
+        -ms-transform: translateX( -50% );
+
+        a{
+            color: #222;
+            &:hover{
+                opacity: 0.6;
+                transition-duration: 0.3s;
+            }
+        }
+    `;

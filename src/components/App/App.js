@@ -5,8 +5,8 @@
 	
 	------------------------------
 
-	@ Versão atual: 1.0.2
-	@ Homologada: 04/12/2018
+	@ Versão atual: 1.0.3
+	@ Homologada: 17/01/2019
 */
 
 import React, { Component } from 'react';
@@ -34,6 +34,7 @@ import {
   	// Footer
   		Logo,
   		Version,
+  		Copy,
 }                           from './styled.js';
 import {
 	addZero,
@@ -435,20 +436,25 @@ class App extends Component {
 
 			return(
 
-				<Wrapper id="MainWrapper">
-					<Panel>
-						<Percent>{this.state.percent}%</Percent>
-						<Separador/>
-						<Clock>{formattedSeconds(this.state.secondsElapsed)}</Clock>
+				<div>
+					<Wrapper id="MainWrapper">
+						<Panel>
+							<Percent>{this.state.percent}%</Percent>
+							<Separador/>
+							<Clock>{formattedSeconds(this.state.secondsElapsed)}</Clock>
 
-						<Button onClick={this._initRegionalizacao.bind(this)} disabled={disableBtn}>{this.state.btnText}</Button>
-					</Panel>
-					<Log>
-						<BoxRows id="BoxRows" />
-					</Log>
-					<Logo><img src="./logo.svg" alt="Logo Json Generator" title="Json Generator | Apoio para regionalização VML" /></Logo>
-					<Version title="Consulte o arquivo Changelog.">v{this.state.version}</Version>
-				</Wrapper>
+							<Button onClick={this._initRegionalizacao.bind(this)} disabled={disableBtn}>{this.state.btnText}</Button>
+						</Panel>
+						<Log>
+							<BoxRows id="BoxRows" />
+						</Log>
+						<Logo><img src="./logo.svg" alt="Logo Json Generator" title="Json Generator | Apoio para regionalização VML" /></Logo>
+						<Version title="Consulte o arquivo Changelog.">v{this.state.version}</Version>
+					</Wrapper>
+					<Copy>
+						Desenvolvido por: <a href="http://reinaldoamorim.com.br/?ref=json-generator" target="_blank">Reinaldo Amorim</a>
+					</Copy>
+				</div>
 
 			)
 
